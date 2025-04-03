@@ -1,12 +1,5 @@
 # Estrutura das Classes
 
-# bancoab1_comtxt <------ projeto ab1 final
-
-
-
-
-
-
 ## Funcionalidades:
 
 - **Criação e gerenciamento de contas**
