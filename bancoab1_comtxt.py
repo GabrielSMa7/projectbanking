@@ -584,7 +584,7 @@ def menu():
 
         elif opcao == "2":
             cpf = input("Digite o CPF: ")
-            if cpf in usuarios:
+            if cpf in usuarios and usuarios[cpf].conta_corrente == None:
                 saldo_inicial = float(input("Saldo inicial: "))
                 usuarios[cpf].conta_corrente = ContaCorrente(saldo_inicial, usuarios[cpf])
                 print(f"Conta Corrente criada com saldo de R$ {saldo_inicial:.2f}")
@@ -592,14 +592,14 @@ def menu():
                 sleep(1)
                 os.system('cls')
             else:
-                print("Usuário não encontrado.")
+                print("Usuário não encontrado ou já possui uma conta corrente.")
                 playsound("erro.mp3")
                 sleep(1)
                 os.system('cls')
 
         elif opcao == "3":
             cpf = input("Digite o CPF: ")
-            if cpf in usuarios:
+            if cpf in usuarios and usuarios[cpf].conta_poupanca == None:
                 saldo_inicial = float(input("Saldo inicial: "))
                 usuarios[cpf].conta_poupanca = ContaPoupanca(saldo_inicial, usuarios[cpf])
                 print(f"Conta Poupança criada com saldo de R$ {saldo_inicial:.2f}")
@@ -607,7 +607,7 @@ def menu():
                 sleep(1)
                 os.system('cls')
             else:
-                print("Usuário não encontrado.")
+                print("Usuário não encontrado ou já possui uma conta poupança.")
                 playsound("erro.mp3")
                 sleep(1)
                 os.system('cls')
@@ -648,8 +648,9 @@ def menu():
 
         elif opcao == "6":
             cpf = input("Digite o CPF para ver o histórico: ")
-            if cpf in usuarios:
+            if cpf in usuarios and usuarios[cpf].conta_corrente != None:
                 usuarios[cpf].conta_corrente.mostrar_historico()
+                input()
             else:
                 print("Usuário não encontrado.")
                 playsound("erro.mp3")
