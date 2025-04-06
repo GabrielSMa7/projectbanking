@@ -1,4 +1,8 @@
 import os
+from time import sleep
+from playsound import playsound
+import random
+import string
 
 class Usuario:
     def __init__(self, nome, cpf, senha):
@@ -212,8 +216,6 @@ class Criptomoeda(Moeda):
 
     def gerar_senha_fake(self):
         """Gera uma senha fake para acessar as criptomoedas."""
-        import random
-        import string
         senha = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
         return senha
 
@@ -571,8 +573,14 @@ def menu():
             if cpf not in usuarios:
                 usuarios[cpf] = Usuario(nome, cpf, senha)
                 print("Usuário criado com sucesso!")
+                playsound("ding.mp3")
+                sleep(1)
+                os.system('cls')
             else:
                 print("Já existe um usuário com esse CPF.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
 
         elif opcao == "2":
             cpf = input("Digite o CPF: ")
@@ -580,8 +588,14 @@ def menu():
                 saldo_inicial = float(input("Saldo inicial: "))
                 usuarios[cpf].conta_corrente = ContaCorrente(saldo_inicial, usuarios[cpf])
                 print(f"Conta Corrente criada com saldo de R$ {saldo_inicial:.2f}")
+                playsound("ding.mp3")
+                sleep(1)
+                os.system('cls')
             else:
                 print("Usuário não encontrado.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
 
         elif opcao == "3":
             cpf = input("Digite o CPF: ")
@@ -589,15 +603,26 @@ def menu():
                 saldo_inicial = float(input("Saldo inicial: "))
                 usuarios[cpf].conta_poupanca = ContaPoupanca(saldo_inicial, usuarios[cpf])
                 print(f"Conta Poupança criada com saldo de R$ {saldo_inicial:.2f}")
+                playsound("ding.mp3")
+                sleep(1)
+                os.system('cls')
             else:
                 print("Usuário não encontrado.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
 
         elif opcao == "4":
             cpf = input("Digite o CPF: ")
             if cpf in usuarios:
                 usuarios[cpf].mostrar_saldo()
+                input()
+                os.system('cls')
             else:
                 print("Usuário não encontrado.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
 
         elif opcao == "5":
             cpf_origem = input("Digite o CPF do usuário de origem: ")
@@ -606,10 +631,20 @@ def menu():
                 if cpf_destino in usuarios and cpf_origem != cpf_destino:
                     valor = float(input("Digite o valor da transferência: "))
                     usuarios[cpf_origem].conta_corrente.realizar_transacao(valor, 'transferencia', usuarios[cpf_destino])
+                    print(f"Transferência de {valor} para {cpf_origem.nome}")
+                    playsound("livechat.mp3")
+                    sleep(1)
+                    os.system('cls')
                 else:
                     print("Usuário de destino inválido ou é o mesmo que o de origem.")
+                    playsound("erro.mp3")
+                    sleep(1)
+                    os.system('cls')
             else:
                 print("Usuário de origem não encontrado.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
 
         elif opcao == "6":
             cpf = input("Digite o CPF para ver o histórico: ")
@@ -617,6 +652,9 @@ def menu():
                 usuarios[cpf].conta_corrente.mostrar_historico()
             else:
                 print("Usuário não encontrado.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
 
         elif opcao == "7":
             cpf = input("Digite o CPF do usuário: ")
@@ -632,8 +670,14 @@ def menu():
                     usuarios[cpf].conta_corrente.realizar_transacao(valor, 'retirar_poupanca')
                 else:
                     print("Opção inválida.")
+                    playsound("erro.mp3")
+                    sleep(1)
+                    os.system('cls')
             else:
                 print("Usuário não encontrado.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
 
         elif opcao == "8":
             cpf = input("Digite o CPF do usuário: ")
@@ -642,6 +686,9 @@ def menu():
                 usuarios[cpf].solicitar_emprestimo(valor)
             else:
                 print("Usuário não encontrado.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
 
         elif opcao == "9":
             cpf = input("Digite o CPF do usuário: ")
@@ -662,6 +709,9 @@ def menu():
                 usuario = usuarios[cpf]
                 if not hasattr(usuario, 'conta_corrente'):
                     print("Usuário não possui uma conta corrente.")
+                    playsound("erro.mp3")
+                    sleep(1)
+                    os.system('cls')
                     continue
 
                 print("Escolha a moeda:")
@@ -682,8 +732,14 @@ def menu():
                     print(ethereum.comprar_moeda(valor, usuario.conta_corrente, usuario))
                 else:
                     print("Opção inválida.")
+                    playsound("erro.mp3")
+                    sleep(1)
+                    os.system('cls')
             else:
                 print("Usuário não encontrado.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
 
         elif opcao == "11":
             cpf = input("Digite o CPF do usuário: ")
@@ -691,6 +747,9 @@ def menu():
                 usuarios[cpf].ver_carteira()
             else:
                 print("Usuário não encontrado.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
 
         elif opcao == "12":
             menu_suporte()
@@ -698,9 +757,13 @@ def menu():
 
         elif opcao == "13":
             print("Saindo...")
+            sleep(1)
             break
         else:
             print("Opção inválida ou ainda não implementada.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
 
 
 
@@ -716,3 +779,4 @@ def menu():
             #else:
              #   print("Usuário não encontrado ou arquivo de dados inexistente.")
 menu()
+
