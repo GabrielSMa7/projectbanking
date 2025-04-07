@@ -11,8 +11,29 @@ class Usuario:
         self.senha = senha
         self.conta_corrente = None
         self.conta_poupanca = None
+        self.talao = 0
         self.divida = 0  # Dívida do empréstimo
         self.carteira = {}  # Carteira de moedas estrangeiras e criptomoedas
+
+    def requerir_talao(self):
+        if self.talao == 0 and self.conta_corrente != None:
+            input("Qantidades de folhas:")
+            print("Seu pedido foi aprovado e será enviado para sua casa")
+            playsound("ding.mp3")
+            sleep(1)
+            os.system("cls")
+            self.talao = 1
+        elif self.talao == 1:
+            print("Já foi feito um pedido recente")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system("cls")
+        elif self.conta_corrente == None:
+            print("É nescessario ter uma conta corrente")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system("cls")
+
 
     def adicionar_moeda_na_carteira(self, nome_moeda, quantidade):
         """Adiciona uma moeda à carteira do usuário."""
@@ -563,7 +584,8 @@ def menu():
         print("10. Comprar Moeda Estrangeira ou Criptomoeda")
         print("11. Ver Carteira de Moedas")
         print("12. Suporte ao Cliente")
-        print("13. Sair")
+        print("13. Requerir talão de cheque")
+        print("14. Sair")
         opcao = input("Escolha uma opção: ")
 
         if opcao == "1":
@@ -755,10 +777,23 @@ def menu():
         elif opcao == "12":
             menu_suporte()
 
-
         elif opcao == "13":
-            print("Saindo...")
-            sleep(1)
+            cpf = input("Digite o CPF: ")
+            if cpf in usuarios:
+                usuarios[cpf].requerir_talao()
+            else:
+                print("Usuário não encontrado.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
+
+        elif opcao == "14":
+            print("Saindo.", end="", flush=True)
+            sleep(0.5)
+            print(".", end="", flush=True)
+            sleep(0.5)
+            print(".", end="", flush=True)
+            sleep(0.5)
             break
         else:
             print("Opção inválida ou ainda não implementada.")
