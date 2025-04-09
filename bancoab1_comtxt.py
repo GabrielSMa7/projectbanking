@@ -293,7 +293,21 @@ class Criptomoeda(Moeda):
 
 
 
-
+class UsuarioFactory:
+   
+    @staticmethod
+    def criar_user(nome, cpf, senha):
+        if not cpf.isdigit() or len(cpf) != 11:
+            raise ValueError("CPF inválido")
+        return Usuario(nome, cpf, senha)
+    
+    @staticmethod 
+    def criar_conta_corrente(usuario, saldoinicial):
+        return ContaCorrente(saldoinicial, usuario)
+    
+    @staticmethod
+    def criar_conta_poupanca(usuario, saldoinicial):
+        return ContaPoupanca(saldoinicial, usuario)
 
 
 
@@ -593,7 +607,7 @@ def menu():
             cpf = input("CPF: ")
             senha = input("Senha: ")
             if cpf not in usuarios:
-                usuarios[cpf] = Usuario(nome, cpf, senha)
+                usuarios[cpf] = UsuarioFactory.criar_user(nome, cpf, senha)
                 print("Usuário criado com sucesso!")
                 playsound("ding.mp3")
                 sleep(1)
@@ -608,7 +622,7 @@ def menu():
             cpf = input("Digite o CPF: ")
             if cpf in usuarios and usuarios[cpf].conta_corrente == None:
                 saldo_inicial = float(input("Saldo inicial: "))
-                usuarios[cpf].conta_corrente = ContaCorrente(saldo_inicial, usuarios[cpf])
+                usuarios[cpf].conta_corrente = UsuarioFactory.criar_conta_corrente(usuarios[cpf], saldo_inicial)
                 print(f"Conta Corrente criada com saldo de R$ {saldo_inicial:.2f}")
                 playsound("ding.mp3")
                 sleep(1)
@@ -623,7 +637,7 @@ def menu():
             cpf = input("Digite o CPF: ")
             if cpf in usuarios and usuarios[cpf].conta_poupanca == None:
                 saldo_inicial = float(input("Saldo inicial: "))
-                usuarios[cpf].conta_poupanca = ContaPoupanca(saldo_inicial, usuarios[cpf])
+                usuarios[cpf].conta_poupanca = UsuarioFactory.criar_conta_poupanca(usuarios[cpf], saldo_inicial)
                 print(f"Conta Poupança criada com saldo de R$ {saldo_inicial:.2f}")
                 playsound("ding.mp3")
                 sleep(1)
