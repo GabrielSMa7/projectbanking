@@ -319,15 +319,178 @@ class UsuarioFactory:
 
 
 
+class facade:
+    def criar_usuario(self, cpf, nome, senha):
+        if cpf not in usuarios:
+            usuarios[cpf] = UsuarioFactory.criar_user(nome, cpf, senha)
+            print("Usuário criado com sucesso!")
+            playsound("ding.mp3")
+            sleep(1)
+            os.system('cls')
+        else:
+            print("Já existe um usuário com esse CPF.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
 
+    def criar_contacorrente(self, cpf):
+        if cpf in usuarios and usuarios[cpf].conta_corrente == None:
+            saldo_inicial = float(input("Saldo inicial: "))
+            usuarios[cpf].conta_corrente = UsuarioFactory.criar_conta_corrente(usuarios[cpf], saldo_inicial)
+            print(f"Conta Corrente criada com saldo de R$ {saldo_inicial:.2f}")
+            playsound("ding.mp3")
+            sleep(1)
+            os.system('cls')
+        else:
+            print("Usuário não encontrado ou já possui uma conta corrente.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
 
+    def criar_contapoupanca(self, cpf):
+        if cpf in usuarios and usuarios[cpf].conta_poupanca == None:
+            saldo_inicial = float(input("Saldo inicial: "))
+            usuarios[cpf].conta_poupanca = UsuarioFactory.criar_conta_poupanca(usuarios[cpf], saldo_inicial)
+            print(f"Conta Poupança criada com saldo de R$ {saldo_inicial:.2f}")
+            playsound("ding.mp3")
+            sleep(1)
+            os.system('cls')
+        else:
+            print("Usuário não encontrado ou já possui uma conta poupança.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
 
+    def saldo(self, cpf):
+        if cpf in usuarios:
+            usuarios[cpf].mostrar_saldo()
+            input()
+            os.system('cls')
+        else:
+            print("Usuário não encontrado.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
 
+    def tranferir(self, cpf_origem):
+        if cpf_origem in usuarios:
+            cpf_destino = input("Digite o CPF do usuário de destino: ")
+            if cpf_destino in usuarios and cpf_origem != cpf_destino:
+                valor = float(input("Digite o valor da transferência: "))
+                usuarios[cpf_origem].conta_corrente.realizar_transacao(valor, 'transferencia', usuarios[cpf_destino])
+                print(f"Transferência de {valor} para {cpf_origem.nome}")
+                playsound("livechat.mp3")
+                sleep(1)
+                os.system('cls')
+            else:
+                print("Usuário de destino inválido ou é o mesmo que o de origem.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
+        else:
+            print("Usuário de origem não encontrado.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
 
+    def historico(self, cpf):
+        if cpf in usuarios and usuarios[cpf].conta_corrente != None:
+            usuarios[cpf].conta_corrente.mostrar_historico()
+            input()
+        else:
+            print("Usuário não encontrado.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
+    def depositar_retirar(self, cpf):
+        if cpf in usuarios:
+            print("1. Depositar dinheiro na Poupança")
+            print("2. Retirar dinheiro da Poupança para a Conta Corrente")
+            escolha = input("Escolha uma opção: ")
+            valor = float(input("Digite o valor: "))
 
+            if escolha == "1":
+                usuarios[cpf].conta_poupanca.depositar(valor)  # Usa o novo método depositar
+            elif escolha == "2":
+                usuarios[cpf].conta_corrente.realizar_transacao(valor, 'retirar_poupanca')
+            else:
+                print("Opção inválida.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
+        else:
+            print("Usuário não encontrado.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
+    def emprestimo(self, cpf):
+        if cpf in usuarios:
+            valor = float(input("Digite o valor do empréstimo: "))
+            usuarios[cpf].solicitar_emprestimo(valor)
+        else:
+            print("Usuário não encontrado.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
+    def pagar_emprestimo(self, cpf):
+        if cpf in usuarios:
+            valor = float(input("Digite o valor que deseja pagar: "))
+            usuarios[cpf].pagar_emprestimo(valor)
+        else:
+            print("Usuário não encontrado.")
+    def comprar_moeda(self, cpf, dolar, euro, bitcoin, ethereum):
+        if cpf in usuarios:
+            usuario = usuarios[cpf]
+            if not hasattr(usuario, 'conta_corrente'):
+                print("Usuário não possui uma conta corrente.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
+                return
 
+            print("Escolha a moeda:")
+            print("1. Dólar")
+            print("2. Euro")
+            print("3. Bitcoin")
+            print("4. Ethereum")
+            escolha = input("Escolha uma opção: ")
+            valor = float(input("Digite o valor em reais: "))
 
+            if escolha == "1":
+                print(dolar.comprar_moeda(valor, usuario.conta_corrente, usuario))
+            elif escolha == "2":
+                print(euro.comprar_moeda(valor, usuario.conta_corrente, usuario))
+            elif escolha == "3":
+                print(bitcoin.comprar_moeda(valor, usuario.conta_corrente, usuario))
+            elif escolha == "4":
+                print(ethereum.comprar_moeda(valor, usuario.conta_corrente, usuario))
+            else:
+                print("Opção inválida.")
+                playsound("erro.mp3")
+                sleep(1)
+                os.system('cls')
+        else:
+            print("Usuário não encontrado.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
+    def carteira(self, cpf):
+        if cpf in usuarios:
+            usuarios[cpf].ver_carteira()
+        else:
+            print("Usuário não encontrado.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
 
+    def requerir_talão(self, cpf):
+        if cpf in usuarios:
+                usuarios[cpf].requerir_talao()
+        else:
+            print("Usuário não encontrado.")
+            playsound("erro.mp3")
+            sleep(1)
+            os.system('cls')
 
 
 
@@ -553,7 +716,7 @@ def menu_suporte():
 usuarios = {}
 
 def menu():
-
+    banco = facade()
 
 
 
@@ -606,187 +769,47 @@ def menu():
             nome = input("Nome: ")
             cpf = input("CPF: ")
             senha = input("Senha: ")
-            if cpf not in usuarios:
-                usuarios[cpf] = UsuarioFactory.criar_user(nome, cpf, senha)
-                print("Usuário criado com sucesso!")
-                playsound("ding.mp3")
-                sleep(1)
-                os.system('cls')
-            else:
-                print("Já existe um usuário com esse CPF.")
-                playsound("erro.mp3")
-                sleep(1)
-                os.system('cls')
+            banco.criar_usuario(cpf, nome, senha)
 
         elif opcao == "2":
             cpf = input("Digite o CPF: ")
-            if cpf in usuarios and usuarios[cpf].conta_corrente == None:
-                saldo_inicial = float(input("Saldo inicial: "))
-                usuarios[cpf].conta_corrente = UsuarioFactory.criar_conta_corrente(usuarios[cpf], saldo_inicial)
-                print(f"Conta Corrente criada com saldo de R$ {saldo_inicial:.2f}")
-                playsound("ding.mp3")
-                sleep(1)
-                os.system('cls')
-            else:
-                print("Usuário não encontrado ou já possui uma conta corrente.")
-                playsound("erro.mp3")
-                sleep(1)
-                os.system('cls')
+            banco.criar_contacorrente(cpf)
 
         elif opcao == "3":
             cpf = input("Digite o CPF: ")
-            if cpf in usuarios and usuarios[cpf].conta_poupanca == None:
-                saldo_inicial = float(input("Saldo inicial: "))
-                usuarios[cpf].conta_poupanca = UsuarioFactory.criar_conta_poupanca(usuarios[cpf], saldo_inicial)
-                print(f"Conta Poupança criada com saldo de R$ {saldo_inicial:.2f}")
-                playsound("ding.mp3")
-                sleep(1)
-                os.system('cls')
-            else:
-                print("Usuário não encontrado ou já possui uma conta poupança.")
-                playsound("erro.mp3")
-                sleep(1)
-                os.system('cls')
+            banco.criar_contapoupanca(cpf)
 
         elif opcao == "4":
             cpf = input("Digite o CPF: ")
-            if cpf in usuarios:
-                usuarios[cpf].mostrar_saldo()
-                input()
-                os.system('cls')
-            else:
-                print("Usuário não encontrado.")
-                playsound("erro.mp3")
-                sleep(1)
-                os.system('cls')
+            banco.saldo(cpf)
 
         elif opcao == "5":
             cpf_origem = input("Digite o CPF do usuário de origem: ")
-            if cpf_origem in usuarios:
-                cpf_destino = input("Digite o CPF do usuário de destino: ")
-                if cpf_destino in usuarios and cpf_origem != cpf_destino:
-                    valor = float(input("Digite o valor da transferência: "))
-                    usuarios[cpf_origem].conta_corrente.realizar_transacao(valor, 'transferencia', usuarios[cpf_destino])
-                    print(f"Transferência de {valor} para {cpf_origem.nome}")
-                    playsound("livechat.mp3")
-                    sleep(1)
-                    os.system('cls')
-                else:
-                    print("Usuário de destino inválido ou é o mesmo que o de origem.")
-                    playsound("erro.mp3")
-                    sleep(1)
-                    os.system('cls')
-            else:
-                print("Usuário de origem não encontrado.")
-                playsound("erro.mp3")
-                sleep(1)
-                os.system('cls')
+            banco.tranferir(cpf_origem)
 
         elif opcao == "6":
             cpf = input("Digite o CPF para ver o histórico: ")
-            if cpf in usuarios and usuarios[cpf].conta_corrente != None:
-                usuarios[cpf].conta_corrente.mostrar_historico()
-                input()
-            else:
-                print("Usuário não encontrado.")
-                playsound("erro.mp3")
-                sleep(1)
-                os.system('cls')
+            banco.historico(cpf)
 
         elif opcao == "7":
             cpf = input("Digite o CPF do usuário: ")
-            if cpf in usuarios:
-                print("1. Depositar dinheiro na Poupança")
-                print("2. Retirar dinheiro da Poupança para a Conta Corrente")
-                escolha = input("Escolha uma opção: ")
-                valor = float(input("Digite o valor: "))
-
-                if escolha == "1":
-                    usuarios[cpf].conta_poupanca.depositar(valor)  # Usa o novo método depositar
-                elif escolha == "2":
-                    usuarios[cpf].conta_corrente.realizar_transacao(valor, 'retirar_poupanca')
-                else:
-                    print("Opção inválida.")
-                    playsound("erro.mp3")
-                    sleep(1)
-                    os.system('cls')
-            else:
-                print("Usuário não encontrado.")
-                playsound("erro.mp3")
-                sleep(1)
-                os.system('cls')
+            banco.depositar_retirar(cpf)
 
         elif opcao == "8":
             cpf = input("Digite o CPF do usuário: ")
-            if cpf in usuarios:
-                valor = float(input("Digite o valor do empréstimo: "))
-                usuarios[cpf].solicitar_emprestimo(valor)
-            else:
-                print("Usuário não encontrado.")
-                playsound("erro.mp3")
-                sleep(1)
-                os.system('cls')
+            banco.emprestimo(cpf)
 
         elif opcao == "9":
             cpf = input("Digite o CPF do usuário: ")
-            if cpf in usuarios:
-                valor = float(input("Digite o valor que deseja pagar: "))
-                usuarios[cpf].pagar_emprestimo(valor)
-            else:
-                print("Usuário não encontrado.")
-
-
-
-
-
+            banco.pagar_emprestimo(cpf)
         
         elif opcao == "10":
             cpf = input("Digite o CPF do usuário: ")
-            if cpf in usuarios:
-                usuario = usuarios[cpf]
-                if not hasattr(usuario, 'conta_corrente'):
-                    print("Usuário não possui uma conta corrente.")
-                    playsound("erro.mp3")
-                    sleep(1)
-                    os.system('cls')
-                    continue
-
-                print("Escolha a moeda:")
-                print("1. Dólar")
-                print("2. Euro")
-                print("3. Bitcoin")
-                print("4. Ethereum")
-                escolha = input("Escolha uma opção: ")
-                valor = float(input("Digite o valor em reais: "))
-
-                if escolha == "1":
-                    print(dolar.comprar_moeda(valor, usuario.conta_corrente, usuario))
-                elif escolha == "2":
-                    print(euro.comprar_moeda(valor, usuario.conta_corrente, usuario))
-                elif escolha == "3":
-                    print(bitcoin.comprar_moeda(valor, usuario.conta_corrente, usuario))
-                elif escolha == "4":
-                    print(ethereum.comprar_moeda(valor, usuario.conta_corrente, usuario))
-                else:
-                    print("Opção inválida.")
-                    playsound("erro.mp3")
-                    sleep(1)
-                    os.system('cls')
-            else:
-                print("Usuário não encontrado.")
-                playsound("erro.mp3")
-                sleep(1)
-                os.system('cls')
+            banco.comprar_moeda(cpf, dolar, euro, bitcoin, ethereum)
 
         elif opcao == "11":
             cpf = input("Digite o CPF do usuário: ")
-            if cpf in usuarios:
-                usuarios[cpf].ver_carteira()
-            else:
-                print("Usuário não encontrado.")
-                playsound("erro.mp3")
-                sleep(1)
-                os.system('cls')
+            banco.carteira(cpf)
 
         elif opcao == "12":
             menu_suporte()
@@ -815,18 +838,5 @@ def menu():
             sleep(1)
             os.system('cls')
 
-
-
-
-        #elif opcao == "14":
-           # cpf = input("Digite o CPF do usuário para carregar os dados: ")
-           # usuario = reconstruir_usuario(cpf)
-            
-            #if usuario:
-             
-             #   usuarios[cpf] = usuario
-              #  print(f"Dados do usuário {usuario.nome} carregados com sucesso!")
-            #else:
-             #   print("Usuário não encontrado ou arquivo de dados inexistente.")
 menu()
 
