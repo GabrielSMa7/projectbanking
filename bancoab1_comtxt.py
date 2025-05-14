@@ -3,6 +3,7 @@ from time import sleep
 from playsound import playsound
 import random
 import string
+from abc import ABC, abstractmethod
 
 class Usuario:
     def __init__(self, nome, cpf, senha):
@@ -483,7 +484,7 @@ class facade:
             sleep(1)
             os.system('cls')
 
-    def requerir_talão(self, cpf):
+    def requerir_talao(self, cpf):
         if cpf in usuarios:
                 usuarios[cpf].requerir_talao()
         else:
@@ -497,18 +498,112 @@ class facade:
 
 
 
+class Command(ABC):
+    def __init__(self, banco):
+        self.banco = banco
+
+    @abstractmethod
+    def executar(self):
+        pass
+
+class CriarUser(Command):
+    def __init__(self, banco):
+        self.banco = banco
+
+    def executar(self):
+        nome = input("Nome: ")
+        cpf = input("CPF: ")
+        senha = input("Senha: ")
+        self.banco.criar_usuario(cpf, nome, senha)
+
+class CriarContaCorrente(Command):
+    def __init__(self, banco):
+        super().__init__(banco)
+
+    def executar(self):
+        cpf = input("Digite o CPF: ")
+        self.banco.criar_contacorrente(cpf)
+
+class CriarContaPoupanca(Command):
+    def __init__(self, banco):
+        super().__init__(banco)
+    
+    def executar(self):
+        cpf = input("Digite o CPF: ")
+        self.banco.criar_contapoupanca(cpf)
+
+class VerSaldo(Command):
+    def __init__(self, banco):
+        super().__init__(banco)
+    
+    def executar(self):
+        cpf = input("Digite o CPF: ")
+        self.banco.saldo(cpf)
+
+class RealizarTransferencia(Command):
+    def __init__(self, banco):
+        super().__init__(banco)
+    def executar(self):
+        cpf = input("Digite o CPF: ")
+        self.banco.saldo(cpf)
+
+class HistoricoTransacoes(Command):
+    def __init__(self, banco):
+        super().__init__(banco)
+    
+    def executar(self):
+        cpf = input("Digite o CPF para ver o histórico: ")
+        self.banco.historico(cpf)
+        
+class DepositarRetirar(Command):
+    def __init__(self, banco):
+        super().__init__(banco)
+    
+    def executar(self):
+        cpf = input("Digite o CPF do usuário: ")
+        self.banco.depositar_retirar(cpf)
+
+class SolicitarEmprestimo(Command):
+    def __init__(self, banco):
+        super().__init__(banco)
+    def executar(self):
+        cpf = input("Digite o CPF do usuário: ")
+        self.banco.emprestimo(cpf)
+
+class PagarEmprestimo(Command):
+    def __init__(self, banco):
+        super().__init__(banco)
+    def executar(self):
+        cpf = input("Digite o CPF do usuário: ")
+        self.banco.pagar_emprestimo(cpf)
+
+class MoedaEstrangeira(Command):
+    def __init__(self, banco, dolar, euro, bitcoin, ethereum):
+        self.dolar = dolar
+        self.euro = euro
+        self.bitcoin = bitcoin
+        self.ethereum = ethereum
+        super().__init__(banco)
+    def executar(self):
+        cpf = input("Digite o CPF do usuário: ")
+        self.banco.comprar_moeda(cpf, self.dolar, self.euro, self.bitcoin, self.ethereum)
+
+class CarteiraMoedas(Command):
+    def __init__(self, banco):
+        super().__init__(banco)
+    
+    def executar(self):
+        cpf = input("Digite o CPF do usuário: ")
+        self.banco.carteira(cpf)
+
+class TalaoCheque(Command):
+    def __init__(self, banco):
+        super().__init__(banco)
+    def executar(self):
+        cpf = input("Digite o CPF do usuário: ")
+        self.banco.requerir_talao(cpf)
 
 
-
-
-
-
-
-
-
-
-
-from abc import ABC, abstractmethod
 
 class SuporteCliente(ABC):
     def __init__(self, nome_cliente, problema):
@@ -600,20 +695,6 @@ class SuporteTelefone(SuporteCliente):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def menu_suporte():
     while True:
         print("\n--- Suporte ao Cliente ---")
@@ -645,83 +726,10 @@ def menu_suporte():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 usuarios = {}
 
 def menu():
     banco = facade()
-
-
-
-
-
 
     # Criando instâncias das moedas
     dolar = DinheiroEstrangeiro("Dólar", 5.0)  # 1 dólar = 5 reais
@@ -729,28 +737,26 @@ def menu():
     bitcoin = Criptomoeda("Bitcoin", 200000.0)  # 1 Bitcoin = 200.000 reais
     ethereum = Criptomoeda("Ethereum", 15000.0)  # 1 Ethereum = 15.000 reais
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    commands = {
+        "1": CriarUser(banco),
+        "2": CriarContaCorrente(banco),
+        "3": CriarContaPoupanca(banco),
+        "4": VerSaldo(banco),
+        "5": RealizarTransferencia(banco),
+        "6": HistoricoTransacoes(banco),
+        "7": DepositarRetirar(banco),
+        "8": SolicitarEmprestimo(banco),
+        "9": PagarEmprestimo(banco),
+        "10": MoedaEstrangeira(banco, dolar, euro, bitcoin, ethereum),
+        "11": CarteiraMoedas(banco),
+        "12": menu_suporte,
+        "13": TalaoCheque(banco),
+        "14": "sair"
+    }
 
     while True:
-        print("\n--- Menu Principal ---")
         print("1. Criar Usuário")
         print("2. Criar Conta Corrente")
-
-       # print("14. Carregar Usuário")
-
-
         print("3. Criar Conta Poupança")
         print("4. Ver Saldo")
         print("5. Realizar Transferência")
@@ -765,66 +771,9 @@ def menu():
         print("14. Sair")
         opcao = input("Escolha uma opção: ")
 
-        if opcao == "1":
-            nome = input("Nome: ")
-            cpf = input("CPF: ")
-            senha = input("Senha: ")
-            banco.criar_usuario(cpf, nome, senha)
+        comando = commands.get(opcao)
 
-        elif opcao == "2":
-            cpf = input("Digite o CPF: ")
-            banco.criar_contacorrente(cpf)
-
-        elif opcao == "3":
-            cpf = input("Digite o CPF: ")
-            banco.criar_contapoupanca(cpf)
-
-        elif opcao == "4":
-            cpf = input("Digite o CPF: ")
-            banco.saldo(cpf)
-
-        elif opcao == "5":
-            cpf_origem = input("Digite o CPF do usuário de origem: ")
-            banco.tranferir(cpf_origem)
-
-        elif opcao == "6":
-            cpf = input("Digite o CPF para ver o histórico: ")
-            banco.historico(cpf)
-
-        elif opcao == "7":
-            cpf = input("Digite o CPF do usuário: ")
-            banco.depositar_retirar(cpf)
-
-        elif opcao == "8":
-            cpf = input("Digite o CPF do usuário: ")
-            banco.emprestimo(cpf)
-
-        elif opcao == "9":
-            cpf = input("Digite o CPF do usuário: ")
-            banco.pagar_emprestimo(cpf)
-        
-        elif opcao == "10":
-            cpf = input("Digite o CPF do usuário: ")
-            banco.comprar_moeda(cpf, dolar, euro, bitcoin, ethereum)
-
-        elif opcao == "11":
-            cpf = input("Digite o CPF do usuário: ")
-            banco.carteira(cpf)
-
-        elif opcao == "12":
-            menu_suporte()
-
-        elif opcao == "13":
-            cpf = input("Digite o CPF: ")
-            if cpf in usuarios:
-                usuarios[cpf].requerir_talao()
-            else:
-                print("Usuário não encontrado.")
-                playsound("erro.mp3")
-                sleep(1)
-                os.system('cls')
-
-        elif opcao == "14":
+        if comando == "sair":
             print("Saindo.", end="", flush=True)
             sleep(0.5)
             print(".", end="", flush=True)
@@ -832,8 +781,16 @@ def menu():
             print(".", end="", flush=True)
             sleep(0.5)
             break
+        
+        elif comando:
+            if isinstance(comando, Command):
+                comando.executar()
+            
+            else:
+                comando()
+
         else:
-            print("Opção inválida ou ainda não implementada.")
+            print("Opção inválida.")
             playsound("erro.mp3")
             sleep(1)
             os.system('cls')
